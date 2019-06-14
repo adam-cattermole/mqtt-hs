@@ -341,7 +341,7 @@ keepAliveLoop mqtt signal = for_ (cKeepAlive mqtt) $ \tout -> forever $ do
       Just _ -> return ()
 
 publishHandler :: Config -> Message 'PUBLISH -> IO ()
-publishHandler mqtt msg = do
+publishHandler mqtt msg =
     case (qos (header msg), pubMsgID (body msg)) of
       (Confirm, Just msgid) -> do
           release

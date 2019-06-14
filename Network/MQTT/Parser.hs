@@ -31,9 +31,8 @@ message :: Parser SomeMessage
 message = do
     (msgType, header) <- mqttHeader
     remaining <- parseRemaining
-    msg <- withSomeSingI msgType $ \sMsgType ->
+    withSomeSingI msgType $ \sMsgType ->
       SomeMessage . Message header <$> mqttBody header sMsgType remaining
-    return msg
 
 
 ---------------------------------
@@ -125,8 +124,8 @@ connect = ctxt' "connect" $ do
     mWill <- parseIf willFlag $
                Will (testBit flags 5)
                   <$> toQoS (3 .&. shiftR flags 3)
-                  <*> (ctxt' "Will Topic" $ fmap toTopic mqttText)
-                  <*> (ctxt' "Will Message" mqttText)
+                  <*> ctxt' "Will Topic" (fmap toTopic mqttText)
+                  <*> ctxt' "Will Message" mqttText
 
     username <- ctxt' "Username" $ parseIf usernameFlag mqttText
 

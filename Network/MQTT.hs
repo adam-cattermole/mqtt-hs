@@ -1,8 +1,5 @@
-{-# Language OverloadedStrings,
-             DataKinds,
-             ScopedTypeVariables,
-             GADTs,
-             DeriveDataTypeable #-}
+{-# LANGUAGE OverloadedStrings, DataKinds, ScopedTypeVariables,
+  GADTs #-}
 {-|
 Module: MQTT
 Copyright: Lukas Braun 2014-2016
@@ -10,6 +7,9 @@ License: GPL-3
 Maintainer: koomi+mqtt@hackerspace-bamberg.de
 
 An MQTT client library.
+
+
+
 -}
 module Network.MQTT
   ( -- * Setup
@@ -109,7 +109,7 @@ subscribe mqtt topics = do
                (Header False Confirm False)
                (Subscribe msgID topics))
              SSUBACK
-    return $ granted $ body $ msg
+    return $ granted $ body msg
 
 -- | Unsubscribe from the given 'Topic's.
 unsubscribe :: Config -> [Topic] -> IO ()
@@ -141,4 +141,3 @@ publish mqtt qos retain topic body = do
                  (Message (Header False Confirm False)
                           (PubRel (fromJust msgID)))
                  SPUBCOMP
-

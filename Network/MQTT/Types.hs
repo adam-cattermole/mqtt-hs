@@ -187,8 +187,8 @@ type MsgID = Word16
 
 -- | Get the message ID of any message, if it exists.
 getMsgID :: MessageBody t -> Maybe MsgID
-getMsgID (Connect{})           = Nothing
-getMsgID (ConnAck{})           = Nothing
+getMsgID Connect{}             = Nothing
+getMsgID ConnAck{}             = Nothing
 getMsgID (Publish _ mMsgid _)  = mMsgid
 getMsgID (PubAck msgid)        = Just msgid
 getMsgID (PubRec msgid)        = Just msgid

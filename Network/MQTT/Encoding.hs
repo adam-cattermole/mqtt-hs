@@ -71,16 +71,16 @@ encodeRemaining n =
 
 -- | Build the 'MessageBody' for any message type.
 putBody :: MessageBody t -> Builder
-putBody (m@Connect{})      = putConnect m
-putBody (m@ConnAck {})     = putConnAck m
-putBody (m@Publish{})      = putPublish m
+putBody m@Connect{}        = putConnect m
+putBody m@ConnAck{}        = putConnAck m
+putBody m@Publish{}        = putPublish m
 putBody (PubAck m)         = putMsgID m
 putBody (PubRec m)         = putMsgID m
 putBody (PubRel m)         = putMsgID m
 putBody (PubComp m)        = putMsgID m
-putBody (m@Subscribe{})    = putSubscribe m
-putBody (m@SubAck{})       = putSubAck m
-putBody (m@Unsubscribe{})  = putUnsubscribe m
+putBody m@Subscribe{}      = putSubscribe m
+putBody m@SubAck{}         = putSubAck m
+putBody m@Unsubscribe{}    = putUnsubscribe m
 putBody (UnsubAck m)       = putMsgID m
 putBody PingReq            = mempty
 putBody PingResp           = mempty
@@ -171,17 +171,17 @@ toBit True = 1
 
 -- | Encode the type of a 'MessageBody'.
 msgType :: (Num a) => MessageBody t -> a
-msgType (Connect{})     = 1
-msgType (ConnAck{})     = 2
-msgType (Publish{})     = 3
-msgType (PubAck{})      = 4
-msgType (PubRec{})      = 5
-msgType (PubRel{})      = 6
-msgType (PubComp{})     = 7
-msgType (Subscribe{})   = 8
-msgType (SubAck{})      = 9
-msgType (Unsubscribe{}) = 10
-msgType (UnsubAck{})    = 11
+msgType Connect{}       = 1
+msgType ConnAck{}       = 2
+msgType Publish{}       = 3
+msgType PubAck{}        = 4
+msgType PubRec{}        = 5
+msgType PubRel{}        = 6
+msgType PubComp{}       = 7
+msgType Subscribe{}     = 8
+msgType SubAck{}        = 9
+msgType Unsubscribe{}   = 10
+msgType UnsubAck{}      = 11
 msgType PingReq         = 12
 msgType PingResp        = 13
 msgType Disconnect      = 14
