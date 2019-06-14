@@ -49,8 +49,8 @@ import Control.Monad (void)
 import Data.ByteString (ByteString)
 import Data.Maybe (fromJust)
 import Data.Unique
-import Network
-import System.IO (hSetBinaryMode)
+import Network.Socket hiding (send)
+import System.IO (hSetBinaryMode, IOMode (ReadWriteMode))
 
 import Network.MQTT.Internal
 import Network.MQTT.Types
@@ -82,7 +82,7 @@ defaultConfig commands published = Config
 -- Exceptions are propagated.
 run :: Config -> IO Terminated
 run conf = do
-    h <- connectTo (cHost conf) (PortNumber $ cPort conf)
+    h <- flip socketToHandle ReadWriteMode =<< connectSocket (cHost conf) (cPort conf)
     hSetBinaryMode h True
     terminatedVar <- newEmptyTMVarIO
     sendSignal <- newEmptyMVar

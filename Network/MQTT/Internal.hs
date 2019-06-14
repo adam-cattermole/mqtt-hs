@@ -38,6 +38,7 @@ module Network.MQTT.Internal
   , publishHandler
   -- * Misc
   , secToMicro
+  , connectSocket
   ) where
 
 import Control.Applicative ((<$>))
@@ -58,7 +59,7 @@ import Data.Singletons (SingI(..))
 import Data.Singletons.Decide
 import Data.Text (Text)
 import Data.Word (Word16)
-import Network
+import Network.Socket hiding (send)
 import System.IO (Handle, hLookAhead)
 import System.Timeout (timeout)
 
@@ -373,3 +374,27 @@ writeCmd mqtt = writeTChanIO (getCmds $ cCommands mqtt)
 
 secToMicro :: Int -> Int
 secToMicro m = m * 10 ^ (6 :: Int)
+
+connectSocket :: HostName -> PortNumber -> IO Socket
+connectSocket host port = do
+    let hints = defaultHints { addrSocketType = Stream }
+    (sock, addr) <- createSocket host port hints
+    setSocketOption sock KeepAlive 1
+    connect sock $ addrAddress addr
+    return sock
+
+createSocket :: HostName -> PortNumber -> AddrInfo -> IO (Socket, AddrInfo)
+createSocket host port hints = do
+    addr <- resolve host port hints
+    sock <- getSocket addr
+    return (sock, addr)
+  where
+    resolve host port hints = do
+        addr:_ <- getAddrInfo (Just hints) (isHost host) (Just (show port))
+        return addr
+    getSocket addr = socket (addrFamily addr)
+                            (addrSocketType addr)
+                            (addrProtocol addr)
+    isHost h
+        | null h    = Nothing
+        | otherwise = Just h
